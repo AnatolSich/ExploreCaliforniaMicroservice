@@ -18,3 +18,5 @@ The following guides illustrate how to use some features concretely:
 * [Accessing Data with JPA](https://spring.io/guides/gs/accessing-data-jpa/)
 
 ![Alt text](screens/domain-model.jpg?raw=true "Optional Title")
+![Alt text](screens/Repo-endpoint-override.jpg?raw=true "Optional Title")
+![Alt text](screens/Repo-methods-restrictions.jpg?raw=true "Optional Title")
