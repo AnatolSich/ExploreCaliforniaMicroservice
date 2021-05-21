@@ -12,3 +12,11 @@ How to limit access to endpoints:
 
 Link to HAL Browser:
 *[HAL Browser](http://localhost:8080/browser/index.html#/)
+
+MVC vc REST:
+
+![Alt text](screens/SpringDataRestVCSpringMVC.jpg?raw=true "Optional Title")
+
+Validation annotations:
+
+![Alt text](screens/Validation-annotations.jpg?raw=true "Optional Title")

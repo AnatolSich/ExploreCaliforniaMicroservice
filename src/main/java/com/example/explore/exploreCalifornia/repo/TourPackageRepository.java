@@ -18,7 +18,7 @@ public interface TourPackageRepository extends CrudRepository<TourPackage, Strin
      * @param name name of the package
      * @return Optional of TourPackage
      */
-    Optional<TourPackage> findByName(@Param("name")String name);
+    Optional<TourPackage> findByName(@Param("name") String name);
 
     @Override
     @RestResource(exported = false)

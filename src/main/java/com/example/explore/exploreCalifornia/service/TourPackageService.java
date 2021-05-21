@@ -19,7 +19,6 @@ public class TourPackageService {
      *
      * @param code code of the package
      * @param name name of the package
-     *
      * @return new or existing tour package
      */
     public TourPackage createTourPackage(String code, String name) {
@@ -31,7 +30,7 @@ public class TourPackageService {
      *
      * @return
      */
-    public Iterable<TourPackage> lookup(){
+    public Iterable<TourPackage> lookup() {
         return tourPackageRepository.findAll();
     }
 

@@ -17,7 +17,7 @@ public interface TourRepository extends PagingAndSortingRepository<Tour, Integer
      * @param code tour package code
      * @return List of found tours.
      */
-    Page<Tour> findByTourPackageCode(@Param("code")String code, Pageable pageable);
+    Page<Tour> findByTourPackageCode(@Param("code") String code, Pageable pageable);
 
     @Override
     @RestResource(exported = false)
