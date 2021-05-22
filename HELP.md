@@ -20,3 +20,26 @@ MVC vc REST:
 Validation annotations:
 
 ![Alt text](screens/Validation-annotations.jpg?raw=true "Optional Title")
+
+### Logging
+Logger is responsible for capturing events, appender records the events and 
+layouts are gresponsible for the appearance of the data in the log entry:
+
+![Alt text](screens/Logging-structure.jpg?raw=true "Optional Title")
+
+#### Logging frameworks.
+Abstraction layer SLF4J decouples an application from any framework and allows to bind
+to spesific framework at runtime:
+
+![Alt text](screens/Logging-frameworks.jpg?raw=true "Optional Title")
+
+Each class instantiates a class scoped logger,
+then calls methods on it to record the events
+according to its imports or severity.
+
+ExploreCalifornia uses the Logback framework,
+where there are four kinds of events:
+error, warning, info, debug and trace.
+
+Error is the highest and most severe event
+
