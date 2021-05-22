@@ -13,8 +13,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
+import java.util.AbstractMap;
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 
 @RestController
@@ -48,44 +50,40 @@ public class TourRatingController {
     }
 
     /**
-     * Lookup a page of Ratings for a tour.
+     * Lookup a the Ratings for a tour.
      *
      * @param tourId   Tour Identifier
      * @param pageable paging details
      * @return Requested page of Tour Ratings as RatingDto's
      */
     @GetMapping
-    public Page<RatingDto> getRatings(@PathVariable(value = "tourId") int tourId,
-                                      Pageable pageable) {
-        verifyTour(tourId);
-        Page<TourRating> ratings = tourRatingRepository.findByPkTourId(tourId, pageable);
-        return new PageImpl<>(
-                ratings.get().map(RatingDto::new).collect(Collectors.toList()),
-                pageable,
-                ratings.getTotalElements()
-        );
+    public Page<RatingDto> getAllRatingsForTour(@PathVariable(value = "tourId") int tourId, Pageable pageable) {
+        Tour tour = verifyTour(tourId);
+        Page<TourRating> tourRatingPage = tourRatingRepository.findByPkTourId(tour.getId(), pageable);
+        List<RatingDto> ratingDtoList = tourRatingPage.getContent().stream().map(tourRating -> toDto(tourRating)).collect(Collectors.toList());
+        return new PageImpl<RatingDto>(ratingDtoList, pageable, tourRatingPage.getTotalPages());
     }
 
     /**
      * Calculate the average Score of a Tour.
      *
-     * @param tourId tour identifier
+     * @param tourId
      * @return Tuple of "average" and the average value.
      */
-    @GetMapping(path = "/average")
-    public Map<String, Double> getAverage(@PathVariable(value = "tourId") int tourId) {
-        verifyTour(tourId);
-        return Map.of("average", tourRatingRepository.findByPkTourId(tourId).stream()
-                .mapToInt(TourRating::getScore).average()
-                .orElseThrow(() ->
-                        new NoSuchElementException("Tour has no Ratings")));
+    @GetMapping("/average")
+    public AbstractMap.SimpleEntry<String, Double> getAverage(@PathVariable(value = "tourId") int tourId) {
+        Tour tour = verifyTour(tourId);
+        List<TourRating> ratings = tourRatingRepository.findByPkTourId(tourId);
+        OptionalDouble average = ratings.stream().mapToInt(TourRating::getScore).average();
+        double result = average.isPresent() ? average.getAsDouble() : null;
+        return new AbstractMap.SimpleEntry<String, Double>("average", result);
     }
 
     /**
      * Update score and comment of a Tour Rating
      *
-     * @param tourId    tour identifier
-     * @param ratingDto rating Data Transfer Object
+     * @param tourId
+     * @param ratingDto
      * @return The modified Rating DTO.
      */
     @PutMapping
@@ -93,14 +91,14 @@ public class TourRatingController {
         TourRating rating = verifyTourRating(tourId, ratingDto.getCustomerId());
         rating.setScore(ratingDto.getScore());
         rating.setComment(ratingDto.getComment());
-        return new RatingDto(tourRatingRepository.save(rating));
+        return toDto(tourRatingRepository.save(rating));
     }
 
     /**
      * Update score or comment of a Tour Rating
      *
-     * @param tourId    tour identifier
-     * @param ratingDto rating Data Transfer Object
+     * @param tourId
+     * @param ratingDto
      * @return The modified Rating DTO.
      */
     @PatchMapping
@@ -112,39 +110,49 @@ public class TourRatingController {
         if (ratingDto.getComment() != null) {
             rating.setComment(ratingDto.getComment());
         }
-        return new RatingDto(tourRatingRepository.save(rating));
+        return toDto(tourRatingRepository.save(rating));
     }
 
     /**
      * Delete a Rating of a tour made by a customer
      *
-     * @param tourId     tour identifier
-     * @param customerId customer identifier
+     * @param tourId
+     * @param customerId
      */
-    @DeleteMapping(path = "/{customerId}")
+    @DeleteMapping("/{customerId}")
     public void delete(@PathVariable(value = "tourId") int tourId, @PathVariable(value = "customerId") int customerId) {
         TourRating rating = verifyTourRating(tourId, customerId);
         tourRatingRepository.delete(rating);
     }
 
     /**
+     * Convert the TourRating entity to a RatingDto
+     *
+     * @param tourRating
+     * @return RatingDto
+     */
+    private RatingDto toDto(TourRating tourRating) {
+        return new RatingDto(tourRating.getScore(), tourRating.getComment(), tourRating.getPk().getCustomerId());
+    }
+
+    /**
      * Verify and return the TourRating for a particular tourId and Customer
      *
-     * @param tourId     tour identifier
-     * @param customerId customer identifier
+     * @param tourId
+     * @param customerId
      * @return the found TourRating
      * @throws NoSuchElementException if no TourRating found
      */
     private TourRating verifyTourRating(int tourId, int customerId) throws NoSuchElementException {
         return tourRatingRepository.findByPkTourIdAndPkCustomerId(tourId, customerId).orElseThrow(() ->
-                new NoSuchElementException("Tour-Rating pair for request("
+                new NoSuchElementException("Tour-Rating pair for request: "
                         + tourId + " for customer" + customerId));
     }
 
     /**
      * Verify and return the Tour given a tourId.
      *
-     * @param tourId tour identifier
+     * @param tourId
      * @return the found Tour
      * @throws NoSuchElementException if no Tour found.
      */

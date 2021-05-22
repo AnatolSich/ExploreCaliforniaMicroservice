@@ -4,21 +4,18 @@ import com.example.explore.exploreCalifornia.domain.Difficulty;
 import com.example.explore.exploreCalifornia.domain.Region;
 import com.example.explore.exploreCalifornia.service.TourPackageService;
 import com.example.explore.exploreCalifornia.service.TourService;
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import lombok.Getter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.List;
-
-import static com.fasterxml.jackson.annotation.JsonAutoDetect.Visibility.ANY;
-import static com.fasterxml.jackson.annotation.PropertyAccessor.FIELD;
 
 @SpringBootApplication
 public class ExploreCaliforniaApplication implements CommandLineRunner {
@@ -35,18 +32,16 @@ public class ExploreCaliforniaApplication implements CommandLineRunner {
         SpringApplication.run(ExploreCaliforniaApplication.class, args);
     }
 
-    @Override
-    public void run(String... args) throws Exception {
-        createTourPackages();
-        long numOfTourPackages = tourPackageService.total();
-        createTours(importFile);
-        long numOfTours = tourService.total();
-    }
-
     /**
-     * Initialize all the known tour packages
+     * Method invoked after this class has been instantiated by Spring container
+     * Initializes the in-memory database with all the TourPackages and Tours.
+     *
+     * @param strings
+     * @throws Exception if problem occurs.
      */
-    private void createTourPackages() {
+    @Override
+    public void run(String... strings) throws Exception {
+        //Create the default tour packages
         tourPackageService.createTourPackage("BC", "Backpack Cal");
         tourPackageService.createTourPackage("CC", "California Calm");
         tourPackageService.createTourPackage("CH", "California Hot springs");
@@ -56,55 +51,41 @@ public class ExploreCaliforniaApplication implements CommandLineRunner {
         tourPackageService.createTourPackage("NW", "Nature Watch");
         tourPackageService.createTourPackage("SC", "Snowboard Cali");
         tourPackageService.createTourPackage("TC", "Taste of California");
+        System.out.println("Number of tours packages =" + tourPackageService.total());
+
+        //Persist the Tours to the database
+        TourFromFile.importTours().forEach(tourFromFile-> tourService.createTour(
+                tourFromFile.title,
+                tourFromFile.description,
+                tourFromFile.blurb,
+                Integer.parseInt(tourFromFile.price),
+                tourFromFile.length,
+                tourFromFile.bullets,
+                tourFromFile.keywords,
+                tourFromFile.packageType,
+                Difficulty.valueOf(tourFromFile.difficulty),
+                Region.findByLabel(tourFromFile.region)));
+        System.out.println("Number of tours =" + tourService.total());
+
+
     }
 
     /**
-     * Create tour entities from an external file
+     * Helper class to import the records in the ExploreCalifornia.json
      */
-    private void createTours(String fileToImport) throws IOException {
-        TourFromFile.read(fileToImport).forEach(importedTour ->
-                tourService.createTour(importedTour.getTitle(),
-                        importedTour.getDescription(),
-                        importedTour.getBlurb(),
-                        importedTour.getPrice(),
-                        importedTour.getLength(),
-                        importedTour.getBullets(),
-                        importedTour.getKeywords(),
-                        importedTour.getPackageType(),
-                        importedTour.getDifficulty(),
-                        importedTour.getRegion()));
-    }
+    static class TourFromFile {
+        //attributes as listed in the .json file
+        private String packageType, title, description, blurb, price, length, bullets, keywords,  difficulty, region;
 
-    /**
-     * Helper class to import ExploreCalifornia.json
-     */
-
-    @Getter
-    private static class TourFromFile {
-        //fields
-        private String packageType, title, description, blurb, price, length,
-                bullets, keywords, difficulty, region;
-
-        //reader
-        static List<TourFromFile> read(String fileToImport) throws IOException {
-            return new ObjectMapper().setVisibility(FIELD, ANY).
-                    readValue(new FileInputStream(fileToImport), new TypeReference<List<TourFromFile>>() {
-                    });
-        }
-
-        protected TourFromFile() {
-        }
-
-        Integer getPrice() {
-            return Integer.parseInt(price);
-        }
-
-        Difficulty getDifficulty() {
-            return Difficulty.valueOf(difficulty);
-        }
-
-        Region getRegion() {
-            return Region.findByLabel(region);
+        /**
+         * Open the ExploreCalifornia.json, unmarshal every entry into a TourFromFile Object.
+         *
+         * @return a List of TourFromFile objects.
+         * @throws IOException if ObjectMapper unable to open file.
+         */
+        static List<TourFromFile> importTours() throws IOException {
+            return new ObjectMapper().setVisibility(PropertyAccessor.FIELD, JsonAutoDetect.Visibility.ANY).
+                    readValue(TourFromFile.class.getResourceAsStream("/ExploreCalifornia.json"),new TypeReference<List<TourFromFile>>(){});
         }
     }
 
