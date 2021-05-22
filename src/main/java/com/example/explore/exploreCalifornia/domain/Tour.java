@@ -4,14 +4,15 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.io.Serializable;
 import java.util.Objects;
 
 @Getter
 @Setter
 @Entity
-public class Tour {
+public class Tour implements Serializable{
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Column
@@ -37,14 +38,14 @@ public class Tour {
 
 
     @ManyToOne
+    @JoinColumn(name="tour_package_code")
     private TourPackage tourPackage;
 
     @Column
-    @Enumerated
+    @Enumerated(EnumType.STRING)
     private Difficulty difficulty;
 
     @Column
-    @Enumerated
     private Region region;
 
     public Tour(String title, String description, String blurb, Integer price, String duration, String bullets,

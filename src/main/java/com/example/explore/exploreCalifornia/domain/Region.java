@@ -1,7 +1,6 @@
 package com.example.explore.exploreCalifornia.domain;
 
 public enum Region {
-
     Central_Coast("Central Coast"),
     Southern_California("Southern California"),
     Northern_California("Northern California"),
@@ -19,5 +18,9 @@ public enum Region {
                 return r;
         }
         return null;
+    }
+
+    public String getLabel() {
+        return label;
     }
 }
