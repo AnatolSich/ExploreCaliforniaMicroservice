@@ -43,3 +43,6 @@ error, warning, info, debug and trace.
 
 Error is the highest and most severe event
 
+#### Documenting API.
+Link to Swagger:
+*[Swagger](http://localhost:8080/swagger-ui/index.html#/)

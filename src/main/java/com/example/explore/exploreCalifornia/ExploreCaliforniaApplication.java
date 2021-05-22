@@ -1,21 +1,18 @@
 package com.example.explore.exploreCalifornia;
 
-import com.example.explore.exploreCalifornia.domain.Difficulty;
-import com.example.explore.exploreCalifornia.domain.Region;
-import com.fasterxml.jackson.annotation.JsonAutoDetect;
-import com.fasterxml.jackson.annotation.PropertyAccessor;
-import com.fasterxml.jackson.core.type.TypeReference;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.CommandLineRunner;
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.info.Info;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
-import java.io.IOException;
-import java.util.List;
-
 @SpringBootApplication
+@OpenAPIDefinition(
+        info = @Info(
+                title = "Explore California API",
+                description = "API Definitions of the Explore California Microservice",
+                version = "3.0.1"
+
+        ))
 public class ExploreCaliforniaApplication {
 
     public static void main(String[] args) {
