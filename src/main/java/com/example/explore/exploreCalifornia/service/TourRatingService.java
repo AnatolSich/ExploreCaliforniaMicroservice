@@ -154,14 +154,12 @@ public class TourRatingService {
      * @param customers
      */
     public void rateMany(int tourId,  int score, Integer [] customers) {
-        System.out.println("DEBUG = " + LOGGER.isDebugEnabled());
-
         LOGGER.info("Rate tour {} by customers {}", tourId, Arrays.asList(customers).toString());
-        Tour tour = tourRepository.findById(tourId).orElseThrow(() -> new NoSuchElementException());
-        for (Integer c : customers) {
-            LOGGER.debug("Attempt to create Tour Rating for customer {}", c);
-            tourRatingRepository.save(new TourRating(tour, c, score));
-        }
+        tourRepository.findById(tourId).ifPresent(tour -> {
+            for (Integer c : customers) {
+                tourRatingRepository.save(new TourRating(tour, c, score));
+            }
+        });
     }
 
     /**
