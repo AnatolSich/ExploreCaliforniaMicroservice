@@ -46,3 +46,18 @@ Error is the highest and most severe event
 #### Documenting API.
 Link to Swagger:
 *[Swagger](http://localhost:8080/swagger-ui/index.html#/)
+
+#### Spring Security.
+Spring Security makes a couple assumptions.
+First of all it assumes that all of our APIs must be forbidden, and protected,
+and second it assumes that the authentication scheme will be form-based authentication
+and each user will have a Servlet session.
+It blocked all the applications, but the sign-in API should always be open.
+WebSecurityConfiguration extends WebSecurityConfigurerAdapter - center of security configuration.
+We override web security configuration adapter's configure method in order to change the default behavior
+of the HTTP security object, so when we invoke of the HTTP security object, so when we invoke
+it will tell Spring security how to handle different APIs.
+
+Because we created a stateless restful API, we need to tell Spring security that cross-site
+request forgery detection should be disabled, and that no sessions should be created for it.
+So session creation policy is stateless.

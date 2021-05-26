@@ -1,13 +1,19 @@
 package com.example.explore.exploreCalifornia.domain;
 
+import lombok.Getter;
+import lombok.Setter;
+import org.springframework.security.core.GrantedAuthority;
+
 import javax.persistence.*;
 
 /**
  * Entity of a Security Role
  */
+@Getter
+@Setter
 @Entity
 @Table(name="security_role")
-public class Role  {
+public class Role implements GrantedAuthority {
     private static final long serialVersionUID = 1L;
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -19,27 +25,8 @@ public class Role  {
     @Column(name="description")
     private String description;
 
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getRoleName() {
+    @Override
+    public String getAuthority() {
         return roleName;
-    }
-
-    public void setRoleName(String roleName) {
-        this.roleName = roleName;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 }
