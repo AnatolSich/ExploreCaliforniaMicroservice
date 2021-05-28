@@ -51,7 +51,7 @@ public class ExceptionHandlerController {
     }
 
     @ExceptionHandler(InsufficientAuthenticationException.class)
-    public void handleInsufficientAuthenticationException(Exception ex, HttpServletResponse res) throws IOException {
+    public void handleInsufficientAuthenticationException(InsufficientAuthenticationException ex, HttpServletResponse res) throws IOException {
         LOGGER.error("Handled Insufficient Authentication Exception", ex);
         res.sendError(HttpStatus.FORBIDDEN.value(), "Insufficient Authentication");
     }

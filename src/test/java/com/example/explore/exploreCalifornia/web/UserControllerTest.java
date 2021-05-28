@@ -10,6 +10,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit4.SpringRunner;
 
@@ -17,7 +18,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.explore.exploreCalifornia.web.JwtRequestHelper.loggedInAs;
 import static org.hamcrest.Matchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.verify;
@@ -36,6 +36,9 @@ public class UserControllerTest {
     @Autowired
     private TestRestTemplate restTemplate;
 
+    @Autowired
+    private JwtRequestHelper jwtRequestHelper;
+
     @MockBean
     private UserService service;
 
@@ -53,11 +56,14 @@ public class UserControllerTest {
 
         ResponseEntity<User> response = restTemplate.exchange("/users/signup",
                 POST,
-                loggedInAs("admin", "ROLE_ADMIN", signupDto),
+                new HttpEntity(signupDto, jwtRequestHelper.withRole("ROLE_ADMIN")),
                 User.class);
 
         assertThat(response.getStatusCode().value(), is(201));
-        assertThat(response.getBody(), is(user));
+        assertThat(response.getBody().getUsername(), is(user.getUsername()));
+        assertThat(response.getBody().getFirstName(), is(user.getFirstName()));
+        assertThat(response.getBody().getLastName(), is(user.getLastName()));
+        assertThat(response.getBody().getRoles().size(), is(user.getRoles().size()));
     }
 
     @Test
@@ -65,7 +71,7 @@ public class UserControllerTest {
 
         ResponseEntity<User> response = restTemplate.exchange("/users/signup",
                 POST,
-                loggedInAs("csr_jane", "ROLE_CSR", signupDto),
+                new HttpEntity(signupDto, jwtRequestHelper.withRole("ROLE_CSR")),
                 User.class);
 
         assertThat(response.getStatusCode().value(), is(403));
@@ -77,7 +83,7 @@ public class UserControllerTest {
 
         ResponseEntity<List<User>> response = restTemplate.exchange("/users",
                 GET,
-                loggedInAs("admin", "ROLE_ADMIN"),
+                new HttpEntity(jwtRequestHelper.withRole("ROLE_ADMIN")),
                 new ParameterizedTypeReference<List<User>>() {
                 });
 
