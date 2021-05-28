@@ -61,3 +61,6 @@ it will tell Spring security how to handle different APIs.
 Because we created a stateless restful API, we need to tell Spring security that cross-site
 request forgery detection should be disabled, and that no sessions should be created for it.
 So session creation policy is stateless.
+
+The authentication manager requires a password encoder bean in order to encode the plain text password
+and then compares it to the previously encoded value in DB.
