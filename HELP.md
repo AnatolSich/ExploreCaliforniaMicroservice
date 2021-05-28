@@ -43,11 +43,11 @@ error, warning, info, debug and trace.
 
 Error is the highest and most severe event
 
-#### Documenting API.
+### Documenting API.
 Link to Swagger:
 *[Swagger](http://localhost:8080/swagger-ui/index.html#/)
 
-#### Spring Security.
+### Spring Security.
 Spring Security makes a couple assumptions.
 First of all it assumes that all of our APIs must be forbidden, and protected,
 and second it assumes that the authentication scheme will be form-based authentication
@@ -64,3 +64,24 @@ So session creation policy is stateless.
 
 The authentication manager requires a password encoder bean in order to encode the plain text password
 and then compares it to the previously encoded value in DB.
+
+### JWT.
+![Alt text](screens/SecurityVCRest.jpg?raw=true "Optional Title")
+A common method is to invoke an API to authenticate, and then return to the client
+a special encoded string called a token. Then, subsequent client requests
+add the token to the HTTP header. OAuth is a frequently used implementation
+of this type of methodology.
+This application will use JSON Web Tokens, also known as JWT or jot.
+![Alt text](screens/JWT-flow.jpg?raw=true "Optional Title")
+JSON web tokens are encrypted data packets that have the following structure:
+![Alt text](screens/JWT-header.jpg?raw=true "Optional Title")
+The header has the type, which is a JSON web token, and it also has the hashing algorithm.
+![Alt text](screens/JWT-payload.jpg?raw=true "Optional Title")
+The payload has the subject of the token, the expiration of the token in terms of a date,
+the iat which is the time the JWT was issued, the jti which is a unique identifier of the JWT
+and then any application-specific key value pairs
+It is the payload that includes the information about the principle, in this case the username and roles.
+Plain text passwords should never be sent in the JWT payload.
+![Alt text](screens/JWT-signature.jpg?raw=true "Optional Title")
+We will also leverage Spring web filters to grab the tokens from their request header,
+interpret them and inject them into the user's security context.

@@ -25,12 +25,22 @@ public class LoginDto {
     }
 
     /**
-     * Full constructor
+     * Partial constructor
      * @param username
      * @param password
      */
     public LoginDto(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+    /**
+     * Full constructor
+     * @param username
+     * @param password
+     */
+    public LoginDto(String username, String password, String firstName, String lastName) {
+        this(username, password);
+        this.firstName = firstName;
+        this.lastName = lastName;
     }
 }

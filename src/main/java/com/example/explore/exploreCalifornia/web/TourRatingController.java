@@ -152,19 +152,5 @@ public class TourRatingController {
         return new RatingDto(tourRating.getScore(), tourRating.getComment(), tourRating.getCustomerId());
     }
 
-    /**
-     * Exception handler if NoSuchElementException is thrown in this Controller
-     *
-     * @param ex
-     * @return Error message String.
-     */
-    @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler(NoSuchElementException.class)
-    public String return404(NoSuchElementException ex) {
-        LOGGER.error("Unable to complete transaction", ex);
-        return ex.getMessage();
-
-    }
-
 }
 
