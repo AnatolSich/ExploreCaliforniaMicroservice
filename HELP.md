@@ -209,6 +209,16 @@ docker run    --name ec-app -p 8080:8080   --link ec-mysql:mysql -d explorecalif
 docker run --name ec-app -p 8080:8080 -v ~/db/migration:/var/migration -e server=ec-mysql -e port=3306 -e dbuser=cali_user -e dbpassword=cali_pass --link ec-mysql:mysql -d explorecalifornia
 ``
 
+Spotify's docker-maven-plugin and dockerfile-maven couples docker commands with maven tasks.
+ What are three advantages of using a docker-aware plugin with your build tool?
+ 
+-introducing Docker into build automation means less manual process
+
+-automatic recreation of images when the code changes
+
+-adapts well into a continuous integration delivery environment with ability to remote repository push and pull 
+
+
 ##### Build jar, image, set default profile
 ``
 mvn package -DskipTests docker:build 
