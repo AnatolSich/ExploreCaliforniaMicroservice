@@ -86,7 +86,7 @@ Plain text passwords should never be sent in the JWT payload.
 We will also leverage Spring web filters to grab the tokens from their request header,
 interpret them and inject them into the user's security context.
 
-### Extending, Securing and Dockerizing Spring Boot Microservices
+### Using docker and external MySql Database.
 
 Final Product requires External MySql Database.
 ####Install Docker For Mac/Windows/Linux
@@ -140,3 +140,24 @@ docker rmi mysql:latest
 
 #####Mysql commands must be finished with ";" !!!
 
+#### Startup with Profile settings
+##### Default profile, H2 database
+``
+mvn spring-boot:run
+``
+
+or
+
+``
+java  -jar target/explorecali-2.0.0-SNAPSHOT.jar
+``
+##### mysql profile, MySql database (requires running container ec-mysql)
+``
+mvn spring-boot:run -Dspring-boot.run.profiles=mysql 
+``
+
+or
+
+``
+java  -Dspring.profiles.active=mysql -jar target/explorecali-2.0.0-SNAPSHOT.jar
+``
