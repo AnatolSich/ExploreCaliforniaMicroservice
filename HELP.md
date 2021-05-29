@@ -191,3 +191,20 @@ docker logs ec-app
 docker run  --name ec-app -p 8080:8080  --link ec-mysql:mysql -d explorecalifornia
 ``
 
+##### enter Docker container
+``
+docker exec -t -i ec-app /bin/bash
+``
+
+##### Run Docker container with default property set in Dockerfile
+``
+docker run --name ec-app -d explorecalifornia
+``
+##### Run Docker container with mysql profile set in Dockerfile
+``
+docker run    --name ec-app -p 8080:8080   --link ec-mysql:mysql -d explorecalifornia
+``
+##### Run Docker container with docker profile set in Dockerfile and migration scripts on host in ~/db/migration folder
+``
+docker run --name ec-app -p 8080:8080 -v ~/db/migration:/var/migration -e server=ec-mysql -e port=3306 -e dbuser=cali_user -e dbpassword=cali_pass --link ec-mysql:mysql -d explorecalifornia
+``
