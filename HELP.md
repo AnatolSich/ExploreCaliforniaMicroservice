@@ -208,3 +208,28 @@ docker run    --name ec-app -p 8080:8080   --link ec-mysql:mysql -d explorecalif
 ``
 docker run --name ec-app -p 8080:8080 -v ~/db/migration:/var/migration -e server=ec-mysql -e port=3306 -e dbuser=cali_user -e dbpassword=cali_pass --link ec-mysql:mysql -d explorecalifornia
 ``
+
+##### Build jar, image, set default profile
+``
+mvn package -DskipTests docker:build 
+``
+###### container with default property set in Dockerfile
+``
+docker run --name ec-app-default -p 8080:8080  -d explorecalifornia-default
+``
+##### Build jar, image, set mysql profile
+``
+mvn package -DskipTests docker:build -Dec-profile=mysql
+``
+##### Run Docker container with mysql profile
+``
+docker run    --name ec-app-mysql -p 8181:8080  --link ec-mysql:mysql -d explorecalifornia-mysql
+``
+##### Build jar, image, set docker profile
+``
+mvn package -DskipTests docker:build -Dec-profile=docker
+``
+##### Run Docker container with docker profile set in Dockerfile and migration scripts on host
+``
+docker run --name ec-app-docker -p 8282:8080 -v ~/db/migration:/var/migration -e server=ec-mysql -e port=3306 -e dbuser=cali_user -e dbpassword=cali_pass --link ec-mysql:mysql -d explorecalifornia-docker
+``
