@@ -184,3 +184,10 @@ docker run --name ec-app -p8080:8080 -d explorecalifornia
 ``
 docker logs ec-app
 ``
+
+####Run docker container ec-app from image explorecalifornia with link to ec-mysql container
+
+``
+docker run  --name ec-app -p 8080:8080  --link ec-mysql:mysql -d explorecalifornia
+``
+
